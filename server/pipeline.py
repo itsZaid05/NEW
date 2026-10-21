@@ -1,6 +1,6 @@
 """Accuracy pipeline: plan -> retrieve -> rank -> verify -> explain/abstain.
 
-Design rules (docs/REBUILD_MASTER_PLAN.md):
+Design rules:
 - Only allow-listed official source URLs may ever be cited. Anything else is
   dropped BEFORE ranking, so a model/provider can never inject a citation.
 - A source is only cited for a proposition if it passes a passage-relevance

@@ -1,5 +1,5 @@
 """DEPRECATED: India static-dataset prototype. Not used by UK production server (server/). Do not import.
-Quarantined per docs/DATASET_AUDIT.md."""
+Deprecated legacy prototype; excluded from active UK legal-information retrieval."""
 import json, os
 import numpy as np
 from pathlib import Path

@@ -1,88 +1,72 @@
 # NyaySaathi
-AI-Powered Legal Companion
-Concept Overview
-Millions avoid legal help due to shame, high cost, and confusion about legal processes. Courts and lawyers spend vast time extracting basic facts, leading to delays and inefficiency.
 
-This project bridges the gap through an AI-based legal triage assistant.
+NyaySaathi is a proof-of-concept legal information and case-preparation web app for England and Wales. It helps users organize a plain-language account, review relevant official legislation, and prepare questions and a case summary for a qualified adviser.
 
-Problems Addressed
-Shame, stigma, and fear (domestic, workplace, abuse issues).​
+It is an educational tool, not a law firm, legal adviser, or emergency service. It does not determine legal rights, predict outcomes, or provide a connected lawyer marketplace.
 
-Expensive lawyer consultations.​
+## Run locally
 
-Confusion over legal processes (sections, documents, procedures).​
+Use Python 3.10 or later. From the repository root:
 
-Delayed justice due to slow fact-extraction in legal workflows.​
+```bash
+python -m server.app
+```
 
-Solution: AI-Powered Legal Assistant
-Confidential intake: Users explain their situation—no shame, no identity needed.​
+Then open [http://localhost:8000](http://localhost:8000). Set the `PORT` environment variable to use a different port.
 
-Story-mode advice: AI narrates fictional, similar cases to educate (avoiding unauthorized legal practice).​
+The browser app is served by `server.app`. `python main.py` starts a separate legacy command-line prototype and is not the web-app entry point. No Node.js build step is used.
 
-RAG-powered: Retrieval-Augmented Generation analyzes past cases and probable outcomes.​
+## What the proof of concept does
 
-Bias/power dynamics aware: Factors in practical realities for tailored guidance.
+- Accepts a plain-language narrative without requiring an account.
+- Builds a case state with possible issue areas, safety signals, a timeline, and information gaps.
+- Searches official legislation through legislation.gov.uk and checks retrieved source passages before presenting grounded propositions.
+- Abstains explicitly when it cannot verify relevant source material.
+- Keeps live case-law retrieval disabled unless the required computational-analysis licence has been granted and confirmed in configuration.
+- Lets users confirm case details and prepare a structured case packet with evidence status and questions for a lawyer.
+- Offers fictionalized educational Story-Mode output only when there is grounded source material.
+- Supports optional server-side Gemini rephrasing of verified propositions; deterministic behavior remains available without an API key.
 
-Automated Legal Formatting: Outputs include relevant sections, acts, and legal procedures.
+## Important limits
 
-Structured Case Summary: Conversational data is converted into a lawyer-ready case sheet.
+- Case-law retrieval is licence-gated and off by default. Do not enable it until written permission and its terms have been reviewed.
+- The app does not connect users to lawyers, transmit a case packet to a lawyer, file documents in court, or provide outcome probabilities.
+- Intake data is not stored in a server database, but the browser keeps case state in local storage. Avoid entering unnecessary identifying or highly sensitive details, especially on a shared device.
+- `models/hybrid_rag_model.py` and `data/nyaysaathi_complete_dataset.json` are a deprecated India-focused prototype and are not used by the active web-server flow.
 
-Lawyer Handoff: With user consent, structured summary sent to licensed lawyer to save time.
+## Configuration
 
-Live Lawyer Connect: In-app direct messaging/calling with lawyers.
+The active server reads provider configuration from its process environment; it does not automatically load `.env`. Use `.env.example` as a reference when configuring your shell or deployment environment. Never commit API keys. Gemini is optional; case-law flags must remain `false` until licensed.
 
-Monetization: Subscription/lead fees for lawyers listed on the platform; AI pre-qualifies clients for them.​
+Relevant environment variables:
 
-Key Features
- Confidential intake (only age and situation required).​
+| Variable | Purpose |
+| --- | --- |
+| `PORT` | HTTP server port (default: `8000`) |
+| `GEMINI_API_KEY` | Optional Gemini rephrasing provider |
+| `LLM_MODEL_EXPLANATION` | Optional Gemini model selection |
+| `CASELAW_LIVE_ENABLED` | Must remain `false` until case-law use is authorized |
+| `CASELAW_COMPUTATIONAL_LICENCE_CONFIRMED` | Must remain `false` until the licence is confirmed |
 
- Educational "storytelling" mode.
+## Tests and evaluation
 
- RAG-powered case law citation.
+Install the test runner if it is not already available, then run:
 
- Bias/power awareness.
+```bash
+python -m pytest -q
+python -m server.evaluate
+```
 
- Legal section mapping with update dates.
+The evaluation runner uses offline fixtures; it does not verify live provider availability. Live legislation connectivity should be checked in the target deployment environment.
 
- Auto-generated case summary sheet with timelines and goals.
+## Project map
 
- Disclaimer: Educational, not legal advice.
+- `index.html`, `style.css`, `app.js` — browser interface.
+- `server/app.py` — standard-library HTTP server and JSON API.
+- `server/core.py`, `server/pipeline.py` — case-state handling, safety signals, source verification, and abstention.
+- `server/providers.py`, `server/legislation.py` — official-source retrieval and provision parsing.
+- `server/story.py`, `server/llm.py`, `server/gemini.py` — grounded Story-Mode output and optional constrained rephrasing.
+- `evaluation/scenarios.json`, `server/evaluate.py`, `tests/` — offline evaluation and tests.
+- `devpost/` — project scope, requirements, technical specification, build checklist, and app map.
 
- Lawyer marketplace for direct user-lawyer connection.
-
- Privacy-first: No data stored without consent; end-to-end encryption.
-
- Scalable: Consumer, family, workplace, tenant, cyber law domains.
-
- Future scope: Multilingual support, automatic filings, court integration.
-
-User Journey
-User shares situation—no identity/shame.
-
-AI listens, searches case law/statutes, and replies with:
-
-Fictional similar case.
-
-Possible legal sections.
-
-Practical risk/advice.
-
-AI creates Case Summary Sheet (structured facts + legal framework).
-
-Disclaimer: "Not a lawyer. Connect to one?"
-
-If yes: select lawyer → chat/call → lawyer receives summary.
-
-User pays lawyer directly; platform earns via listing/lead fees.​
-
-Business Model
-Revenue from lawyer subscriptions, listings, or lead generation.
-
-Value for lawyers through pre-qualified, well-prepared client onboarding.
-
-Future Scope
-Multilingual interface.
-
-Automatic document generation and filing.
-
-Integration with court e-filing systems.​
+The existing Git history is preserved; removed development notes may still be visible in earlier commits.
