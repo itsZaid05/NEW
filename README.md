@@ -4,6 +4,10 @@ NyaySaathi is a proof-of-concept legal information and case-preparation web app 
 
 It is an educational tool, not a law firm, legal adviser, or emergency service. It does not determine legal rights, predict outcomes, or provide a connected lawyer marketplace.
 
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
+
 ## Run locally
 
 Use Python 3.10 or later. From the repository root:
